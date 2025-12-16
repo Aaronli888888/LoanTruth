@@ -1,11 +1,12 @@
-export type Language = 'zh' | 'en';
-
 export interface AnalysisResult {
   productType: string;
-  originalNominalRate?: number; // The raw number seen in the image (e.g. 0.05)
-  rateUnit?: 'DAY' | 'MONTH' | 'YEAR'; // The unit of the raw number
-  nominalRate: number; // The Annualized rate (e.g. 18.25)
-  realApr: number;
+  originalNominalRate?: number; // The raw number found (e.g. 0.05)
+  rateUnit?: 'DAY' | 'MONTH' | 'YEAR'; // The unit found (e.g. Day)
+  nominalRate: number; // Annualized nominal rate
+  
+  realApr: number; // The Final Verified Truth (Algo or AI)
+  aiEstimatedApr?: number; // The original AI estimation (for comparison)
+  
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'SCAM';
   verdict: string;
   pitfalls: string[];
@@ -16,20 +17,23 @@ export interface AnalysisResult {
   }[];
   advice: string;
   hiddenFees: string[];
+  warnings?: string[]; // Data integrity warnings from cross-verification
+  
+  // New fields for transparency and verification
   calculationDetails: {
-    formula: string;
-    explanation: string; // Detailed step-by-step explanation
-    cashFlowSample: string; // e.g. "Loan: +10000, Month 1: -850..."
+    formula: string; // Description of the formula used
+    explanation: string; // Text explanation of the math
+    cashFlowSample?: string; // e.g. "In: +10000, Out: -850/mo * 12"
+    iterationLogs?: string[]; // Log of Newton-Raphson steps
   };
-  verification?: {
-    isVerified: boolean;
+  verification: {
+    isVerified: boolean; // True if local algorithm matches AI or local algo was used
     method: 'AI_ESTIMATE' | 'ALGORITHM_EXACT';
-    correctionApplied: boolean;
     extractedParams?: {
       principal: number;
       term: number;
       payment: number;
-      upfrontFees: number;
+      upfrontFees?: number;
     };
   };
 }
