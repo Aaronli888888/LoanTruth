@@ -1,39 +1,60 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { AnalysisResult, ChartData } from '../types';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { AnalysisResult, ChartData, Language } from '../types';
+import { getTexts } from '../utils/translations';
 
 interface AnalysisChartProps {
   data: AnalysisResult;
+  lang: Language;
 }
 
-const AnalysisChart: React.FC<AnalysisChartProps> = ({ data }) => {
+const AnalysisChart: React.FC<AnalysisChartProps> = ({ data, lang }) => {
+  const t = getTexts(lang);
+  
   const chartData: ChartData[] = [
-    { name: '宣称利率', rate: data.nominalRate, fill: '#3b82f6' }, // Blue
-    { name: '真实年化 (IRR)', rate: data.realApr, fill: data.realApr > 24 ? '#ef4444' : data.realApr > 15 ? '#f59e0b' : '#10b981' }, // Dynamic color
+    { name: t.nominalRate.split(' (')[0], rate: data.nominalRate, fill: '#64748b' }, // Slate 500
+    { name: t.realApr.split(' (')[0], rate: data.realApr, fill: data.realApr > 24 ? '#ef4444' : data.realApr > 15 ? '#f59e0b' : '#10b981' },
     ...data.marketComparison.map(m => ({
-      name: `市场平均 (${m.category})`,
+      name: `${t.marketAvg}`,
       rate: m.averageApr,
-      fill: '#64748b' // Slate
-    })).slice(0, 1) // Just take the first relevant comparison to keep chart clean
+      fill: '#334155' // Slate 700
+    })).slice(0, 1)
   ];
 
   return (
-    <div className="w-full h-64 mt-4 bg-card rounded-lg p-4 border border-slate-700">
-      <h3 className="text-sm font-semibold text-slate-400 mb-4 text-center">利率真相对比图 (%)</h3>
+    <div className="w-full h-48 mt-2">
+      <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 text-center">{t.chartTitle}</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 0, right: 40, left: 10, bottom: 0 }}
+          barCategoryGap={15}
         >
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#334155" />
-          <XAxis type="number" stroke="#94a3b8" unit="%" />
-          <YAxis dataKey="name" type="category" width={100} stroke="#94a3b8" style={{ fontSize: '12px' }} />
-          <Tooltip 
-            cursor={{fill: '#334155', opacity: 0.2}}
-            contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }}
+          <XAxis type="number" hide />
+          <YAxis 
+            dataKey="name" 
+            type="category" 
+            width={90} 
+            stroke="#64748b" 
+            tick={{fontSize: 11, fill: '#94a3b8'}}
+            tickLine={false}
+            axisLine={false}
           />
-          <Bar dataKey="rate" radius={[0, 4, 4, 0]} barSize={30}>
+          <Tooltip 
+            cursor={{fill: '#334155', opacity: 0.1}}
+            contentStyle={{ 
+              backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+              borderColor: 'rgba(71, 85, 105, 0.5)', 
+              color: '#f8fafc',
+              borderRadius: '8px',
+              fontSize: '12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)'
+            }}
+            formatter={(value: number) => [`${value}%`]}
+            itemStyle={{ color: '#e2e8f0' }}
+          />
+          <Bar dataKey="rate" radius={[0, 4, 4, 0]} barSize={24} label={{ position: 'right', fill: '#94a3b8', fontSize: 12, formatter: (v: number) => `${v}%` }}>
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.fill} />
             ))}

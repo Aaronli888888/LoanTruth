@@ -1,44 +1,37 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { UploadCloud, Image as ImageIcon, Loader2, ScanLine, BrainCircuit, Calculator, ShieldCheck, Lightbulb } from 'lucide-react';
+import { Language } from '../types';
+import { getTexts } from '../utils/translations';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
   isProcessing: boolean;
+  lang: Language;
 }
 
-const TIPS = [
-  "分期手续费 ≠ 利率。真实年化(IRR)往往是手续费率的 1.8~2.0 倍。",
-  "看到 '日息万分之五'？千万别大意，那是年化 18.25% 的高息！",
-  "提前还款如果还要收 '违约金' 或 '剩余手续费'，就是典型的霸王条款。",
-  "注意 '担保费'、'保险费'、'服务费'，这些都是变相利息。",
-  "所谓的 '免息' 分期，通常会收取高额的手续费，其实更贵。",
-  "银行 App 详情页最底部那行灰色小字，往往藏着真相。",
-  "不要只看 '月供' 多少，要看 '总利息' 占了本金的比例。"
-];
+const ICONS = [ScanLine, BrainCircuit, Calculator, ShieldCheck];
 
-const STEPS = [
-  { text: "正在识别图片内容...", icon: ScanLine },
-  { text: "提取关键利率数据...", icon: BrainCircuit },
-  { text: "正在还原真实 IRR...", icon: Calculator },
-  { text: "深度扫描隐形陷阱...", icon: ShieldCheck },
-];
-
-const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing, lang }) => {
+  const t = getTexts(lang);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const [currentStep, setCurrentStep] = useState(0);
-  const [currentTip, setCurrentTip] = useState(TIPS[0]);
+  const [currentTip, setCurrentTip] = useState(t.scamTips[0]);
+
+  // Reset tip when language changes
+  useEffect(() => {
+    setCurrentTip(t.scamTips[0]);
+  }, [lang]);
 
   useEffect(() => {
     let tipTimer: ReturnType<typeof setInterval>;
 
     if (isProcessing) {
       setCurrentStep(0);
-      setCurrentTip(TIPS[Math.floor(Math.random() * TIPS.length)]);
+      setCurrentTip(t.scamTips[Math.floor(Math.random() * t.scamTips.length)]);
       
-      // Simulate progress steps
-      const stepDelays = [0, 2000, 4500, 7000]; // Delays for each step start
+      const stepDelays = [0, 2000, 4500, 7000];
       
       const timers = stepDelays.map((delay, index) => {
         return setTimeout(() => {
@@ -46,9 +39,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
         }, delay);
       });
 
-      // Rotate tips
       tipTimer = setInterval(() => {
-        setCurrentTip(TIPS[Math.floor(Math.random() * TIPS.length)]);
+        setCurrentTip(t.scamTips[Math.floor(Math.random() * t.scamTips.length)]);
       }, 4000);
 
       return () => {
@@ -56,7 +48,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
         clearInterval(tipTimer);
       };
     }
-  }, [isProcessing]);
+  }, [isProcessing, lang]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -101,7 +93,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
           flex flex-col items-center justify-center text-center
           transition-all duration-300
           bg-slate-900/50 backdrop-blur-sm
-          min-h-[420px]
+          min-h-[450px]
           ${isDragging 
             ? 'border-emerald-500 bg-emerald-500/10 scale-[1.02]' 
             : isProcessing 
@@ -122,10 +114,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
           <div className="w-full flex flex-col h-full justify-between animate-fade-in">
             {/* Steps Visualization */}
             <div className="space-y-6 mt-4">
-              {STEPS.map((step, idx) => {
+              {t.steps.map((stepText, idx) => {
                 const isActive = idx === currentStep;
                 const isCompleted = idx < currentStep;
-                const Icon = step.icon;
+                const Icon = ICONS[idx];
 
                 return (
                   <div 
@@ -145,7 +137,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
                       {isActive ? <Loader2 className="w-5 h-5 animate-spin" /> : <Icon className="w-5 h-5" />}
                     </div>
                     <span className={`text-sm font-medium ${isActive ? 'text-emerald-300' : 'text-slate-400'}`}>
-                      {step.text}
+                      {stepText}
                     </span>
                   </div>
                 );
@@ -159,9 +151,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <Lightbulb className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">防坑小贴士</span>
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">{t.tipTitle}</span>
               </div>
-              <p key={currentTip} className="text-sm text-amber-100/90 leading-relaxed animate-fade-in">
+              <p className="text-sm text-amber-100/90 leading-relaxed animate-fade-in min-h-[3em]">
                 {currentTip}
               </p>
             </div>
@@ -172,10 +164,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
               <UploadCloud className="w-10 h-10 text-slate-300 group-hover:text-emerald-400 transition-colors" />
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2">上传利率截图</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">{t.uploadTitle}</h3>
             <p className="text-slate-400 mb-6">
-              支持银行App截图、海报、合同照片<br/>
-              <span className="text-xs text-slate-500">(拖拽图片到这里，或点击上传)</span>
+              {t.uploadDesc}<br/>
+              <span className="text-xs text-slate-500">{t.uploadDrag}</span>
             </p>
 
             <div className="flex gap-4 text-xs text-slate-500">
@@ -189,8 +181,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) =
       
       {!isProcessing && (
         <p className="text-center text-slate-500 text-xs mt-6 max-w-sm mx-auto">
-          我们不会保存您的图片。所有分析均由 Google Gemini AI 实时处理。
-          请勿上传包含身份证号或银行卡号的敏感图片。
+          {t.privacyNote}
         </p>
       )}
     </div>
