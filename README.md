@@ -52,7 +52,7 @@
 
 ### 在线体验
 
-[Google AI Studio](https://ai.studio/apps/drive/15MI-mmD22MLXXWyq3lYZ5ug95q-PFKWG)
+[GitHub Pages](https://focus688.github.io/LoanTruth/)
 
 ### 本地运行
 
@@ -158,7 +158,7 @@ npm run dev
 
 **数学不会骗人。看清它，你就赢了。**
 
-[立即体验](https://ai.studio/apps/drive/15MI-mmD22MLXXWyq3lYZ5ug95q-PFKWG) · [报告 Issue](https://github.com/Focus688/LoanTruth/issues) · [一起贡献](CONTRIBUTING.md)
+[立即体验](https://focus688.github.io/LoanTruth/) · [报告 Issue](https://github.com/Focus688/LoanTruth/issues) · [一起贡献](CONTRIBUTING.md)
 
 <sub>Made with ❤️ for every young person trapped in debt.</sub>
 
