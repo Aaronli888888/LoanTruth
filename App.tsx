@@ -4,7 +4,7 @@ import FileUpload from './components/FileUpload';
 import IncomeInput from './components/IncomeInput';
 import AnalysisView from './components/AnalysisView';
 import EducationGrid from './components/EducationGrid';
-import { analyzeLoanImage } from './services/geminiService';
+import { analyzeLoanImage } from './services/llmService';
 import { AnalysisResult } from './types';
 
 type Step = 'upload' | 'income' | 'processing' | 'result';
@@ -185,7 +185,7 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/50 bg-slate-900/50 py-8 text-center text-slate-500 text-sm">
-        <p className="mb-2">Powered by Google Gemini 2.5 Flash &amp; Mathematical Algorithms</p>
+        <p>Powered by 智谱 GLM-4V-Flash &amp; Halley IRR 算法</p>
         <p>帮助全球"韭菜"脱离金融贷款的控制 · Open Source</p>
       </footer>
 
