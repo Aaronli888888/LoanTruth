@@ -5,7 +5,7 @@ import { AnalysisResult } from "../types";
 // ============================================================
 const API_ENDPOINT = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
 const API_KEY = import.meta.env.VITE_ZHIPU_API_KEY || "";
-const MODEL = "glm-4v-flash";
+const MODEL = "glm-4.6v-flash";
 
 // ============================================================
 // IRR 算法：Halley 迭代法（三阶收敛，比 Newton-Raphson 快 3x）

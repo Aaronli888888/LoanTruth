@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
-[![智谱 GLM-4V-Flash](https://img.shields.io/badge/GLM--4V--Flash-8B5CF6?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMkM2LjQ3NyAyIDIgNi40NzcgMiAxMnM0LjQ3NyAxMCAxMCAxMCAxMC00LjQ3NyAxMC0xMFMxNy41MjMgMiAxMiAyem0wIDE4Yy00LjQxMSAwLTgtMy41ODktOC04czMuNTg5LTggOC04IDggMy41ODkgOCA4LTMuNTg5IDgtOCA4eiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=&logoColor=white)](https://bigmodel.cn)
+[![智谱 GLM-4.6V-Flash](https://img.shields.io/badge/GLM--4.6V--Flash-8B5CF6?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMkM2LjQ3NyAyIDIgNi40NzcgMiAxMnM0LjQ3NyAxMCAxMCAxMCAxMC00LjQ3NyAxMC0xMFMxNy41MjMgMiAxMiAyem0wIDE4Yy00LjQxMSAwLTgtMy41ODktOC04czMuNTg5LTggOC04IDggMy41ODkgOCA4LTMuNTg5IDgtOCA4eiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=&logoColor=white)](https://bigmodel.cn)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 
 **🌍 帮助全球年轻人看懂利率陷阱，拒绝被收割**
@@ -64,7 +64,7 @@ cd LoanTruth
 # 2. 安装依赖
 npm install
 
-# 3. 配置智谱 GLM-4V-Flash API 密钥
+# 3. 配置智谱 GLM-4.6V-Flash API 密钥
 #    去 https://bigmodel.cn 注册，免费获取 API Key
 echo "VITE_ZHIPU_API_KEY=你的key" > .env.local
 
@@ -81,7 +81,7 @@ npm run dev
 | 框架 | React 19 + TypeScript |
 | 构建 | Vite 6 |
 | 样式 | Tailwind CSS (CDN) |
-| AI | 智谱 GLM-4V-Flash (永久免费) |
+| AI | 智谱 GLM-4.6V-Flash (永久免费) |
 | 算法 | Halley IRR (三阶收敛，客户端纯计算) |
 | 图表 | Recharts |
 | 图标 | Lucide React |
@@ -93,7 +93,7 @@ npm run dev
 ```
 用户上传截图
     ↓
-智谱 GLM-4V-Flash 解析图像 → 提取(本金/期数/还款/费用)
+智谱 GLM-4.6V-Flash 解析图像 → 提取(本金/期数/还款/费用)
     ↓
 本地 Halley IRR 算法 → 精确计算真实年化
     ↓
