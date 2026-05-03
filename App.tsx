@@ -185,7 +185,7 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/50 bg-slate-900/50 py-8 text-center text-slate-500 text-sm">
-        <p>Powered by 智谱 GLM-4.6V-Flash &amp; Halley IRR 算法</p>
+        <p>Powered by 智谱 GLM-4V-Flash &amp; Halley IRR 算法</p>
         <p>帮助全球"韭菜"脱离金融贷款的控制 · Open Source</p>
       </footer>
 

@@ -74,7 +74,7 @@ function calculateIRR(cashFlows: number[], guess = 0.1): { rate: number, logs: s
 // ============================================================
 // 图片压缩（上传前缩小体积）
 // ============================================================
-function compressImage(base64: string, maxWidth = 1200, quality = 0.8): Promise<string> {
+function compressImage(base64: string, maxWidth = 1600, quality = 0.92): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
