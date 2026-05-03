@@ -199,6 +199,9 @@ export const analyzeLoanImage = async (base64Images: string[], monthlyIncome?: n
       });
     }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       headers: {
@@ -212,9 +215,12 @@ export const analyzeLoanImage = async (base64Images: string[], monthlyIncome?: n
           { role: "user", content: userContent }
         ],
         temperature: 0.1,
-        max_tokens: 4096
-      })
+        max_tokens: 1024
+      }),
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
 
     if (!response.ok) {
       const errBody = await response.text();

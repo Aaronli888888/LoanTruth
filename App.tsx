@@ -69,7 +69,8 @@ const App: React.FC = () => {
 
     } catch (err) {
       console.error(err);
-      setError("AI 分析失败。请确保图片清晰，或者网络连接正常。如果上传了多张图片，请确保它们属于同一个产品。");
+      const msg = err instanceof Error ? err.message : '未知错误';
+      setError(`AI 分析失败: ${msg}`);
       setStep('upload');
     } finally {
       setIsProcessing(false);
