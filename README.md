@@ -64,8 +64,9 @@ cd LoanTruth
 # 2. 安装依赖
 npm install
 
-# 3. 配置 Gemini API 密钥
-echo "GEMINI_API_KEY=你的密钥" > .env.local
+# 3. 配置智谱 GLM-4V-Flash API 密钥
+#    去 https://bigmodel.cn 注册，免费获取 API Key
+echo "VITE_ZHIPU_API_KEY=你的key" > .env.local
 
 # 4. 启动
 npm run dev
