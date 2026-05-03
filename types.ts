@@ -19,15 +19,14 @@ export interface AnalysisResult {
   hiddenFees: string[];
   warnings?: string[]; // Data integrity warnings from cross-verification
   
-  // New fields for transparency and verification
   calculationDetails: {
-    formula: string; // Description of the formula used
-    explanation: string; // Text explanation of the math
-    cashFlowSample?: string; // e.g. "In: +10000, Out: -850/mo * 12"
-    iterationLogs?: string[]; // Log of Newton-Raphson steps
+    formula: string;
+    explanation: string;
+    cashFlowSample?: string;
+    iterationLogs?: string[];
   };
   verification: {
-    isVerified: boolean; // True if local algorithm matches AI or local algo was used
+    isVerified: boolean;
     method: 'AI_ESTIMATE' | 'ALGORITHM_EXACT';
     extractedParams?: {
       principal: number;
@@ -36,6 +35,28 @@ export interface AnalysisResult {
       upfrontFees?: number;
     };
   };
+
+  // --- New fields for income-burden & human impact ---
+  incomeBurdenAnalysis?: {
+    /** Debt-to-income ratio in percentage (e.g. 40 means 40% of income goes to loan) */
+    debtToIncomeRatio: number;
+    /** Monthly payment / Monthly income */
+    monthlyPaymentRatio: number;
+    /** Years to pay off at current rate */
+    yearsToPayoff: number;
+    /** Total interest paid over full term */
+    totalInterest: number;
+    /** Human-readable summary */
+    summary: string;
+  };
+  /** WARNING: Don't take more loans to pay this one */
+  debtCycleWarning?: string;
+  /** WARNING: Don't use stocks/crypto/gambling to get out */
+  investmentGamblingWarning?: string;
+  /** Positive step-by-step survival advice */
+  survivalRoadmap?: string[];
+  /** Monthly payment amount (for burden calculation client-side) */
+  monthlyPayment?: number;
 }
 
 export interface ChartData {

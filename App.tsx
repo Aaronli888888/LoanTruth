@@ -1,25 +1,58 @@
 import React, { useState } from 'react';
-import { Github, Zap, ShieldCheck, Scale, Calculator } from 'lucide-react';
+import { Github, Scale, Calculator, Zap, ShieldCheck } from 'lucide-react';
 import FileUpload from './components/FileUpload';
+import IncomeInput from './components/IncomeInput';
 import AnalysisView from './components/AnalysisView';
 import EducationGrid from './components/EducationGrid';
 import { analyzeLoanImage } from './services/geminiService';
 import { AnalysisResult } from './types';
 
+type Step = 'upload' | 'income' | 'processing' | 'result';
+
 const App: React.FC = () => {
+  const [step, setStep] = useState<Step>('upload');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [monthlyIncome, setMonthlyIncome] = useState<number | undefined>(undefined);
 
   const handleAnalyze = async (files: File[]) => {
     if (files.length === 0) return;
 
+    setUploadedFiles(files);
+    
+    // If we don't have income info yet, ask for it first
+    if (!monthlyIncome) {
+      setStep('income');
+      return;
+    }
+    
+    await runAnalysis(files, monthlyIncome);
+  };
+
+  const handleIncomeSubmit = (income: number) => {
+    setMonthlyIncome(income);
+    setStep('processing');
+    runAnalysis(uploadedFiles, income);
+  };
+
+  const handleIncomeSkip = () => {
+    setMonthlyIncome(undefined);
+    setStep('processing');
+    runAnalysis(uploadedFiles, undefined);
+  };
+
+  const handleIncomeBack = () => {
+    setStep('upload');
+  };
+
+  const runAnalysis = async (files: File[], income?: number) => {
     setIsProcessing(true);
     setError(null);
     setResult(null);
 
     try {
-      // Convert all files to base64
       const filePromises = files.map(file => {
         return new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -30,12 +63,14 @@ const App: React.FC = () => {
       });
 
       const base64Images = await Promise.all(filePromises);
-      const analysis = await analyzeLoanImage(base64Images);
+      const analysis = await analyzeLoanImage(base64Images, income);
       setResult(analysis);
+      setStep('result');
 
     } catch (err) {
       console.error(err);
       setError("AI 分析失败。请确保图片清晰，或者网络连接正常。如果上传了多张图片，请确保它们属于同一个产品。");
+      setStep('upload');
     } finally {
       setIsProcessing(false);
     }
@@ -44,7 +79,14 @@ const App: React.FC = () => {
   const handleReset = () => {
     setResult(null);
     setError(null);
+    setStep('upload');
+    setUploadedFiles([]);
+    // Keep monthlyIncome so next analysis skips income step
   };
+
+  const showUpload = step === 'upload' || step === 'processing';
+  const showIncome = step === 'income';
+  const showResult = step === 'result';
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-emerald-500/30">
@@ -67,7 +109,7 @@ const App: React.FC = () => {
             </span>
           </div>
           <a 
-            href="https://github.com" 
+            href="https://github.com/Focus688/LoanTruth" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
@@ -81,7 +123,8 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="relative z-10 flex-grow flex flex-col items-center justify-start p-4 sm:p-8 pt-12">
         
-        {!result && (
+        {/* Hero Section - only on upload step */}
+        {showUpload && !error && (
           <div className="text-center max-w-3xl mx-auto mb-12 animate-fade-in px-4">
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">
               <span className="block text-white mb-2">拒绝被收割</span>
@@ -118,12 +161,22 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {!result ? (
+          {showIncome && (
+            <IncomeInput 
+              onSubmit={handleIncomeSubmit}
+              onSkip={handleIncomeSkip}
+              onBack={handleIncomeBack}
+            />
+          )}
+
+          {showUpload && !error && (
             <>
               <FileUpload onAnalyze={handleAnalyze} isProcessing={isProcessing} />
               {!isProcessing && <EducationGrid />}
             </>
-          ) : (
+          )}
+
+          {showResult && result && (
             <AnalysisView result={result} onReset={handleReset} />
           )}
         </div>
@@ -132,8 +185,8 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/50 bg-slate-900/50 py-8 text-center text-slate-500 text-sm">
-        <p className="mb-2">Powered by Google Gemini 2.5 Flash & Mathematical Algorithms</p>
-        <p>帮助全球“韭菜”脱离金融贷款的控制 · Open Source</p>
+        <p className="mb-2">Powered by Google Gemini 2.5 Flash &amp; Mathematical Algorithms</p>
+        <p>帮助全球"韭菜"脱离金融贷款的控制 · Open Source</p>
       </footer>
 
     </div>

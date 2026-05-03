@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, CheckCircle, ShieldAlert, BadgePercent, ScanSearch, Info, Calculator, FileText, TrendingDown, ArrowRight, ShieldCheck, Terminal, ChevronDown, ChevronUp, RefreshCw, TriangleAlert, FileJson } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ShieldAlert, BadgePercent, ScanSearch, Info, Calculator, FileText, TrendingDown, ArrowRight, ShieldCheck, Terminal, ChevronDown, ChevronUp, RefreshCw, TriangleAlert, FileJson, Wallet, Skull, Ban, Heart, Flame, DollarSign } from 'lucide-react';
 import { AnalysisResult } from '../types';
 import AnalysisChart from './AnalysisChart';
 
@@ -35,6 +35,28 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
   const diff = result.aiEstimatedApr ? (result.realApr - result.aiEstimatedApr).toFixed(2) : "0";
   const hasSignificantDiff = Math.abs(parseFloat(diff)) > 0.1;
 
+  const getBurdenColor = (ratio: number) => {
+    if (ratio > 50) return 'text-red-400 border-red-500/30 bg-red-500/10';
+    if (ratio > 30) return 'text-orange-400 border-orange-500/30 bg-orange-500/10';
+    if (ratio > 20) return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
+    return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
+  };
+
+  const getBurdenIcon = (ratio: number) => {
+    if (ratio > 50) return <Skull className="w-5 h-5" />;
+    if (ratio > 30) return <AlertTriangle className="w-5 h-5" />;
+    if (ratio > 20) return <Info className="w-5 h-5" />;
+    return <CheckCircle className="w-5 h-5" />;
+  };
+
+  const getBurdenLabel = (ratio: number) => {
+    if (ratio > 70) return '🔴 极危 — 不可持续';
+    if (ratio > 50) return '🔴 高危 — 随时崩溃';
+    if (ratio > 30) return '🟡 警戒 — 日渐艰难';
+    if (ratio > 20) return '🟢 偏高 — 注意控制';
+    return '🟢 健康 — 可控范围';
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6 animate-fade-in-up pb-12">
       
@@ -55,7 +77,7 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
         </div>
       </div>
 
-      {/* Warnings Section (if any) */}
+      {/* Warnings Section */}
       {result.warnings && result.warnings.length > 0 && (
         <div className="bg-orange-500/10 border border-orange-500/40 rounded-xl p-4 flex items-start gap-3">
           <TriangleAlert className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
@@ -64,6 +86,80 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
             {result.warnings.map((warn, idx) => (
               <p key={idx} className="text-xs text-orange-300/90">{warn}</p>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* INCOME BURDEN DASHBOARD - NEW */}
+      {result.incomeBurdenAnalysis && (
+        <div className={`p-5 rounded-xl border ${getBurdenColor(result.incomeBurdenAnalysis.debtToIncomeRatio)}`}>
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-black/20 rounded-full shrink-0">
+              {getBurdenIcon(result.incomeBurdenAnalysis.debtToIncomeRatio)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <h3 className="text-base font-bold flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    债务负担分析
+                  </h3>
+                  <p className="text-xs opacity-70 mt-0.5">
+                    {getBurdenLabel(result.incomeBurdenAnalysis.debtToIncomeRatio)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className={`text-3xl font-black ${result.incomeBurdenAnalysis.debtToIncomeRatio > 50 ? 'text-red-400' : result.incomeBurdenAnalysis.debtToIncomeRatio > 30 ? 'text-orange-400' : 'text-emerald-400'}`}>
+                    {result.incomeBurdenAnalysis.debtToIncomeRatio.toFixed(0)}%
+                  </div>
+                  <div className="text-[10px] opacity-60 uppercase tracking-widest">月供占收入比</div>
+                </div>
+              </div>
+
+              {/* Burden bar */}
+              <div className="mt-3 h-2.5 bg-black/20 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full rounded-full transition-all duration-1000 ${
+                    result.incomeBurdenAnalysis.debtToIncomeRatio > 50 
+                      ? 'bg-gradient-to-r from-red-500 to-red-600' 
+                      : result.incomeBurdenAnalysis.debtToIncomeRatio > 30
+                        ? 'bg-gradient-to-r from-orange-400 to-orange-500'
+                        : 'bg-gradient-to-r from-emerald-400 to-emerald-500'
+                  }`}
+                  style={{ width: `${Math.min(100, result.incomeBurdenAnalysis.debtToIncomeRatio)}%` }}
+                />
+              </div>
+
+              {/* Stats grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                <div className="bg-black/15 rounded-lg p-2.5 text-center">
+                  <div className="text-[10px] opacity-60">月供</div>
+                  <div className="text-sm font-mono font-bold">${result.verification.extractedParams?.payment?.toLocaleString() || '?'}</div>
+                </div>
+                <div className="bg-black/15 rounded-lg p-2.5 text-center">
+                  <div className="text-[10px] opacity-60">总利息</div>
+                  <div className="text-sm font-mono font-bold text-red-400">
+                    ${result.incomeBurdenAnalysis.totalInterest.toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-black/15 rounded-lg p-2.5 text-center">
+                  <div className="text-[10px] opacity-60">还清需</div>
+                  <div className="text-sm font-mono font-bold">{result.incomeBurdenAnalysis.yearsToPayoff}年</div>
+                </div>
+                <div className="bg-black/15 rounded-lg p-2.5 text-center">
+                  <div className="text-[10px] opacity-60">负担评级</div>
+                  <div className="text-sm font-bold">
+                    {result.incomeBurdenAnalysis.debtToIncomeRatio > 50 ? '极危' : 
+                     result.incomeBurdenAnalysis.debtToIncomeRatio > 30 ? '高危' :
+                     result.incomeBurdenAnalysis.debtToIncomeRatio > 20 ? '警戒' : '正常'}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs mt-3 leading-relaxed opacity-80">
+                {result.incomeBurdenAnalysis.summary}
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -135,7 +231,7 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
           {/* Chart */}
           <AnalysisChart data={result} />
 
-          {/* Verification Box - The "Show your work" section */}
+          {/* Verification Box */}
           {result.verification.extractedParams && (
             <div className="bg-slate-900/50 border border-slate-700/50 rounded-xl p-4">
               <h3 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
@@ -167,7 +263,7 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
           <div className="bg-card border border-slate-700 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4 text-orange-400">
               <ScanSearch className="w-5 h-5" />
-              <h3 className="font-bold">主要“坑”点 (Pitfalls)</h3>
+              <h3 className="font-bold">主要"坑"点 (Pitfalls)</h3>
             </div>
             <ul className="space-y-3">
               {result.pitfalls.map((pit, idx) => (
@@ -195,7 +291,71 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
             </p>
           </div>
 
-          {/* Calculation Breakdown - Redesigned */}
+          {/* DEBT CYCLE WARNING - NEW */}
+          {result.debtCycleWarning && (
+            <div className="bg-gradient-to-br from-red-900/30 to-red-950/30 border border-red-500/40 rounded-xl p-5 relative overflow-hidden">
+              <div className="absolute top-0 right-0 opacity-5">
+                <Ban size={120} />
+              </div>
+              <div className="flex items-start gap-3 relative">
+                <div className="p-2.5 bg-red-500/20 rounded-full shrink-0 border border-red-500/30">
+                  <Flame className="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-red-400 text-sm mb-1 flex items-center gap-2">
+                    ⛔ 债务循环警告
+                  </h3>
+                  <p className="text-sm text-red-300/90 leading-relaxed">
+                    {result.debtCycleWarning}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* INVESTMENT GAMBLING WARNING - NEW */}
+          {result.investmentGamblingWarning && (
+            <div className="bg-gradient-to-br from-amber-900/30 to-amber-950/30 border border-amber-500/40 rounded-xl p-5 relative overflow-hidden">
+              <div className="absolute top-0 right-0 opacity-5">
+                <TrendingDown size={120} />
+              </div>
+              <div className="flex items-start gap-3 relative">
+                <div className="p-2.5 bg-amber-500/20 rounded-full shrink-0 border border-amber-500/30">
+                  <Ban className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-amber-400 text-sm mb-1 flex items-center gap-2">
+                    🎲 不要妄图"搏一搏"
+                  </h3>
+                  <p className="text-sm text-amber-300/90 leading-relaxed">
+                    {result.investmentGamblingWarning}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SURVIVAL ROADMAP - NEW */}
+          {result.survivalRoadmap && result.survivalRoadmap.length > 0 && (
+            <div className="bg-gradient-to-br from-emerald-900/20 to-slate-900 border border-emerald-500/30 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Heart className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-bold text-emerald-400 text-sm">摆脱债务 · 生存路线图</h3>
+              </div>
+              <ol className="space-y-3">
+                {result.survivalRoadmap.map((step, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <span className="w-6 h-6 bg-emerald-500/20 border border-emerald-500/30 rounded-full flex items-center justify-center text-xs font-bold text-emerald-400 shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <p className="text-sm text-slate-300 leading-relaxed">{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Calculation Breakdown */}
           {result.calculationDetails && (
             <div className="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden">
               <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
@@ -212,7 +372,6 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
               </div>
               
               <div className="p-5 space-y-5">
-                {/* Formula */}
                 {result.calculationDetails.formula && (
                   <div>
                     <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -226,7 +385,6 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
                   </div>
                 )}
                 
-                {/* Cash Flow */}
                 {result.calculationDetails.cashFlowSample && (
                   <div>
                     <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -240,7 +398,6 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
                   </div>
                 )}
 
-                {/* Newton-Raphson Iteration Logs (Terminal Style) */}
                 {result.calculationDetails.iterationLogs && result.calculationDetails.iterationLogs.length > 0 && (
                   <div>
                     <div 
@@ -274,7 +431,6 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
                   </div>
                 )}
 
-                {/* Analysis Text */}
                 <div>
                   <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <ArrowRight size={12} /> 分析逻辑
@@ -282,7 +438,6 @@ const AnalysisView: React.FC<AnalysisViewProps> = ({ result, onReset }) => {
                   <div className="text-sm text-slate-400 leading-relaxed space-y-3">
                     {result.calculationDetails.explanation.split('\n').map((line, i) => {
                       if (!line.trim()) return null;
-                      // Highlight headers in the explanation text
                       const isHeader = line.match(/^\d+\./); 
                       return (
                         <p key={i} className={`pl-3 border-l-2 ${isHeader ? 'border-emerald-500 text-slate-300 font-medium' : 'border-slate-700 text-slate-400'}`}>

@@ -4,9 +4,8 @@ import { AnalysisResult } from "../types";
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // --- Local Algorithm: Newton-Raphson for IRR ---
-// Returns both the rate and the execution logs for transparency
 function calculateIRR(cashFlows: number[], guess = 0.1): { rate: number, logs: string[] } {
-  const maxIterations = 20; // Newton's method usually converges very fast
+  const maxIterations = 20;
   const tolerance = 1e-7;
   let rate = guess;
   const logs: string[] = [];
@@ -15,10 +14,8 @@ function calculateIRR(cashFlows: number[], guess = 0.1): { rate: number, logs: s
 
   for (let i = 0; i < maxIterations; i++) {
     let npv = 0;
-    let dNpv = 0; // Derivative of NPV
+    let dNpv = 0;
 
-    // f(r) = Σ C_t / (1+r)^t
-    // f'(r) = Σ -t * C_t / (1+r)^(t+1)
     for (let t = 0; t < cashFlows.length; t++) {
       const df = Math.pow(1 + rate, -t);
       npv += cashFlows[t] * df;
@@ -41,7 +38,6 @@ function calculateIRR(cashFlows: number[], guess = 0.1): { rate: number, logs: s
 
     const newRate = rate - npv / dNpv;
     
-    // Safety check for wild divergence
     if (Math.abs(newRate) > 100) { 
         logs.push(`[WARN] 结果发散，停止计算。`);
         return { rate, logs }; 
@@ -88,9 +84,39 @@ You must extract raw values for the 'verification' object so our external algori
 - **Term**: Total duration in months.
 - **Payment**: Amount paid per period (Principal + Interest + Fees).
 - **UpfrontFees**: Any amount deducted before receiving cash (砍头息).
+
+**INCOME BURDEN ANALYSIS RULES:**
+If monthlyIncome is provided, calculate:
+- debtToIncomeRatio = (monthlyPayment / monthlyIncome) × 100
+- monthlyPaymentRatio = monthlyPayment / monthlyIncome → "贷款月供/月收入比"
+- totalInterest = (payment × term) - effectivePrincipal
+- yearsToPayoff = term / 12
+- summary: A plain-language sentence about whether this burden is survivable.
+
+**DEBT CYCLE WARNING RULES:**
+Be brutally honest. Use examples like "借新还旧" death spiral.
+- If APR > 24%: warn that debt cycle leads to bankruptcy within 18-24 months.
+- If APR > 36%: warn that you can never climb out.
+- Every extra loan = worse terms = deeper hole.
+
+**INVESTMENT/GAMBLING WARNING RULES:**
+- Warn NEVER to use stocks/funds/crypto to "make back" loan money.
+- State the statistical reality: 90%+ of retail traders lose money.
+- "用高风险投资还债 = 用火烧水救火"
+- Gambling is NOT an investment strategy.
+
+**SURVIVAL ROADMAP RULES:**
+Generate 5-7 concrete numbered steps:
+1. Stop borrowing immediately (cut all credit cards)
+2. Call the lender to negotiate terms
+3. Calculate exact payoff amount
+4. Snowball/avalanche method
+5. Side income suggestions
+6. Credit counseling resources
+7. Legal options if already in debt cycle
 `;
 
-export const analyzeLoanImage = async (base64Images: string[]): Promise<AnalysisResult> => {
+export const analyzeLoanImage = async (base64Images: string[], monthlyIncome?: number): Promise<AnalysisResult> => {
   try {
     const parts = base64Images.map(base64 => {
       const cleanBase64 = base64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
@@ -134,7 +160,17 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
       - formula: Show the math (e.g. "APR = (1 + r)^n - 1" or "Newton-Raphson method for IRR").
       - cashFlowSample: Show the flows (e.g. "T0: +10000 (Principal), T1-T12: -890 (Repayment)").
 
-      **STEP 6: GENERATE ADVICE**
+      **STEP 6: INCOME BURDEN ANALYSIS**
+      ${monthlyIncome ? `The user's monthly income is approximately: ${monthlyIncome}. Use this to calculate debt burden.` : 'Monthly income was NOT provided. Set incomeBurdenAnalysis to null.'}
+
+      **STEP 7: GENERATE WARNINGS**
+      - debtCycleWarning: WARNING against borrowing more to pay this loan.
+      - investmentGamblingWarning: WARNING against stocks/crypto/gambling.
+
+      **STEP 8: SURVIVAL ROADMAP**
+      - survivalRoadmap: Array of 5-7 concrete actionable steps.
+
+      **STEP 9: GENERATE ADVICE**
       Be direct. If it's a bad deal, say "Don't touch this." If it's okay, say "Acceptable but be careful."
       
       Output JSON only.
@@ -150,7 +186,7 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
       },
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.0, // Force deterministic output
+        temperature: 0.0,
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -160,6 +196,7 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
             rateUnit: { type: Type.STRING, enum: ["DAY", "MONTH", "YEAR"] },
             nominalRate: { type: Type.NUMBER, description: "Annualized Rate %" },
             realApr: { type: Type.NUMBER, description: "AI Estimated APR" },
+            monthlyPayment: { type: Type.NUMBER, description: "Monthly payment amount" },
             riskLevel: { type: Type.STRING, enum: ["LOW", "MEDIUM", "HIGH", "SCAM"] },
             verdict: { type: Type.STRING },
             pitfalls: { type: Type.ARRAY, items: { type: Type.STRING } },
@@ -176,6 +213,19 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
             },
             advice: { type: Type.STRING },
             hiddenFees: { type: Type.ARRAY, items: { type: Type.STRING } },
+            debtCycleWarning: { type: Type.STRING },
+            investmentGamblingWarning: { type: Type.STRING },
+            survivalRoadmap: { type: Type.ARRAY, items: { type: Type.STRING } },
+            incomeBurdenAnalysis: {
+              type: Type.OBJECT,
+              properties: {
+                debtToIncomeRatio: { type: Type.NUMBER },
+                monthlyPaymentRatio: { type: Type.NUMBER },
+                yearsToPayoff: { type: Type.NUMBER },
+                totalInterest: { type: Type.NUMBER },
+                summary: { type: Type.STRING }
+              }
+            },
             calculationDetails: {
               type: Type.OBJECT,
               properties: {
@@ -211,7 +261,6 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
     const rawResult = JSON.parse(response.text);
 
     // --- CLIENT-SIDE CROSS-VERIFICATION ---
-    // We trust Math over AI for the final number, but we check for Logical Sanity first.
     let finalApr = rawResult.realApr;
     const aiEstimatedApr = rawResult.realApr; 
     let isVerified = false;
@@ -219,7 +268,6 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
     
     const warnings: string[] = [];
     
-    // Default explanation from AI
     let calculationDetails = rawResult.calculationDetails || { 
       formula: "IRR Estimation", 
       explanation: "AI estimated based on advertised rates.", 
@@ -233,28 +281,23 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
       const effectivePrincipal = params.principal - (params.upfrontFees || 0);
       const totalRepayment = params.payment * params.term;
 
-      // SANITY CHECK 1: Negative Interest / Impossible Terms
       if (totalRepayment < effectivePrincipal) {
         warnings.push(`数据异常警报：识别到的总还款额 (${totalRepayment}) 小于实际到手本金 (${effectivePrincipal})。`);
         warnings.push(`可能原因：1. "每期还款"识别为不含本金的利息；2. 存在未识别的尾款；3. 期数识别错误。`);
         warnings.push(`已自动暂停算法验证，保留 AI 估算结果供参考。`);
       } else {
-        // Construct Cash Flow if sane
         const cashFlows = [effectivePrincipal];
         for (let i = 0; i < params.term; i++) {
           cashFlows.push(-params.payment);
         }
 
         try {
-          // Calculate IRR
           const { rate: monthlyIRR, logs: iterationLogs } = calculateIRR(cashFlows);
           const calculatedAPR = monthlyIRR * 12 * 100; 
           
-          // SANITY CHECK 2: Result Validity
           if (isNaN(calculatedAPR) || calculatedAPR > 1000 || calculatedAPR < -100) {
              warnings.push(`算法异常：计算出的 APR (${calculatedAPR.toFixed(2)}%) 超出合理范围。可能是输入参数极度偏差导致。`);
           } else {
-            // Valid calculation - Override AI
             finalApr = Number(calculatedAPR.toFixed(2));
             isVerified = true;
             method = 'ALGORITHM_EXACT';
@@ -274,6 +317,26 @@ export const analyzeLoanImage = async (base64Images: string[]): Promise<Analysis
                varianceExplanation = `
 [交叉验证] 偏差分析: AI 估算 ${aiEstimatedApr}% vs 算法精确值 ${finalApr}%。
                `.trim();
+            }
+
+            // === CLIENT-SIDE INCOME BURDEN ANALYSIS ===
+            let incomeBurdenAnalysis = rawResult.incomeBurdenAnalysis;
+            if (monthlyIncome && monthlyIncome > 0 && !incomeBurdenAnalysis) {
+              const monthlyPayment = rawResult.monthlyPayment || params.payment;
+              const ratio = (monthlyPayment / monthlyIncome) * 100;
+              const totalInterestCalc = (params.payment * params.term) - effectivePrincipal;
+              
+              incomeBurdenAnalysis = {
+                debtToIncomeRatio: Math.round(ratio * 100) / 100,
+                monthlyPaymentRatio: Math.round((monthlyPayment / monthlyIncome) * 100) / 100,
+                yearsToPayoff: Math.round(params.term / 12 * 10) / 10,
+                totalInterest: Math.round(totalInterestCalc),
+                summary: ratio > 50 
+                  ? `⚠️ 你的月供 (${monthlyPayment}) 占月收入 (${monthlyIncome}) 的 ${ratio.toFixed(0)}%！超过 50% = 债务陷阱，基本没有余力应付生活开支。`
+                  : ratio > 30
+                    ? `月供占收入 ${ratio.toFixed(0)}%，属于高负担。超过 30% 就已经很吃力了。`
+                    : `月供占收入 ${ratio.toFixed(0)}%，尚可承受，但仍需注意不要新增其他债务。`
+              };
             }
 
             calculationDetails = {
@@ -303,11 +366,6 @@ ${varianceExplanation}
           console.warn("Calculation failed", e);
           warnings.push("内部计算错误，已回退至 AI 估算值。");
         }
-      }
-    } else {
-      // params missing
-      if (rawResult.verdict.includes("High") || rawResult.riskLevel === "SCAM") {
-         // No warnings needed, just typical behavior
       }
     }
 
