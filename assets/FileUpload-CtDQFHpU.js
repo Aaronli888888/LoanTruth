@@ -1,0 +1,39 @@
+import{c as o,r as n,j as e}from"./index-CI3dilPL.js";/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const D=[["path",{d:"M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z",key:"kmsa83"}],["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}]],S=o("circle-play",D);/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const A=[["path",{d:"M12 6v6l4 2",key:"mmk7yg"}],["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}]],F=o("clock",A);/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const L=[["path",{d:"M12 13v8",key:"1l5pq0"}],["path",{d:"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242",key:"1pljnt"}],["path",{d:"m8 17 4-4 4 4",key:"1quai1"}]],$=o("cloud-upload",L);/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const z=[["path",{d:"M21 12a9 9 0 1 1-6.219-8.56",key:"13zald"}]],j=o("loader-circle",z);/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const R=[["path",{d:"M5 12h14",key:"1ays0h"}],["path",{d:"M12 5v14",key:"s699le"}]],U=o("plus",R);/**
+ * @license lucide-react v0.561.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const E=[["path",{d:"M18 6 6 18",key:"1bl5f8"}],["path",{d:"m6 6 12 12",key:"d8bk6v"}]],O=o("x",E),u=["正在预处理图片并建立加密通道...","AI 正在识别合同中的微小条款...","提取本金、期数与隐含费用...","构建现金流折现模型 (DCF)...","运行牛顿迭代法 (Newton-Raphson) 双重验算...","正在生成详细避坑分析报告..."],G=({onAnalyze:N,isProcessing:l})=>{const[d,h]=n.useState([]),[p,f]=n.useState([]),[y,c]=n.useState(!1),[i,m]=n.useState(0),[b,v]=n.useState(0),x=n.useRef(null);n.useEffect(()=>{let t,a;return l?(m(0),v(0),t=setInterval(()=>{m(s=>{if(s>=90)return s;const r=Math.max(.5,(90-s)/10);return s+Math.random()*r})},200),a=setInterval(()=>{v(s=>(s+1)%u.length)},2500)):m(0),()=>{clearInterval(t),clearInterval(a)}},[l]);const g=t=>{const a=[],s=[];Array.from(t).forEach(r=>{r.type.startsWith("image/")&&(a.push(r),s.push(URL.createObjectURL(r)))}),h(r=>[...r,...a]),f(r=>[...r,...s])},w=t=>{t.preventDefault(),l||c(!0)},k=()=>{c(!1)},M=t=>{t.preventDefault(),c(!1),!l&&t.dataTransfer.files&&g(Array.from(t.dataTransfer.files))},I=t=>{t.target.files&&g(Array.from(t.target.files))},_=t=>{const a=[...d],s=[...p];URL.revokeObjectURL(s[t]),a.splice(t,1),s.splice(t,1),h(a),f(s)},C=()=>{d.length>0&&N(d)};return e.jsxs("div",{className:"w-full max-w-2xl mx-auto",children:[d.length===0?e.jsx("div",{onClick:()=>{var t;return!l&&((t=x.current)==null?void 0:t.click())},onDragOver:w,onDragLeave:k,onDrop:M,className:`
+            relative overflow-hidden cursor-pointer group
+            border-2 border-dashed rounded-3xl p-12
+            flex flex-col items-center justify-center text-center
+            transition-all duration-300
+            bg-slate-900/50 backdrop-blur-sm
+            min-h-[360px]
+            ${y?"border-emerald-500 bg-emerald-500/10 scale-[1.02]":l?"border-slate-700 bg-slate-900/80 cursor-default":"border-slate-700 hover:border-emerald-400 hover:bg-slate-800"}
+          `,children:l?e.jsxs("div",{className:"flex flex-col items-center w-full max-w-sm",children:[e.jsxs("div",{className:"relative mb-6",children:[e.jsx("div",{className:"absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse"}),e.jsx(j,{className:"relative w-16 h-16 text-emerald-500 animate-spin"})]}),e.jsx("h3",{className:"text-xl font-bold text-white mb-2 transition-all duration-500 min-h-[1.75rem]",children:u[b]}),e.jsx("div",{className:"w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-3 border border-slate-700",children:e.jsx("div",{className:"h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-300 ease-out",style:{width:`${i}%`}})}),e.jsxs("div",{className:"flex items-center gap-2 text-xs text-slate-500 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50",children:[e.jsx(F,{size:12,className:"text-emerald-500"}),e.jsx("span",{children:"预计耗时: 5 ~ 15 秒 (视计算复杂度而定)"})]})]}):e.jsxs(e.Fragment,{children:[e.jsx("div",{className:"w-20 h-20 mb-6 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-slate-700 group-hover:border-emerald-500/50 shadow-xl relative z-10",children:e.jsx($,{className:"w-10 h-10 text-slate-300 group-hover:text-emerald-400 transition-colors"})}),e.jsx("h3",{className:"text-2xl font-bold text-white mb-2 relative z-10",children:"上传利率截图"}),e.jsxs("p",{className:"text-slate-400 mb-6 relative z-10",children:["支持多张图片 (如: 首页广告 + 详细还款计划表)",e.jsx("br",{}),e.jsx("span",{className:"text-xs text-slate-500",children:"(拖拽多图到这里，或点击上传)"})]}),e.jsx("div",{className:"absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"})]})}):e.jsxs("div",{className:"bg-slate-900/50 border border-slate-700 rounded-3xl p-6 animate-fade-in",children:[e.jsxs("div",{className:"grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8",children:[p.map((t,a)=>e.jsxs("div",{className:"relative group aspect-square rounded-xl overflow-hidden border border-slate-700 bg-slate-800",children:[e.jsx("img",{src:t,alt:`Upload ${a}`,className:"w-full h-full object-cover"}),!l&&e.jsx("button",{onClick:()=>_(a),className:"absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600",children:e.jsx(O,{size:14})})]},a)),!l&&e.jsxs("div",{onClick:()=>{var t;return(t=x.current)==null?void 0:t.click()},className:"aspect-square rounded-xl border-2 border-dashed border-slate-700 flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500 hover:text-emerald-500 text-slate-500 transition-colors",children:[e.jsx(U,{size:24}),e.jsx("span",{className:"text-xs mt-2",children:"添加更多"})]})]}),e.jsx("div",{className:"flex justify-center",children:l?e.jsxs("div",{className:"w-full max-w-md mx-auto",children:[e.jsxs("div",{className:"flex items-center justify-between text-sm text-slate-400 mb-2",children:[e.jsxs("span",{className:"flex items-center gap-2",children:[e.jsx(j,{className:"animate-spin w-4 h-4 text-emerald-500"}),u[b]]}),e.jsxs("span",{className:"font-mono text-emerald-500",children:[Math.round(i),"%"]})]}),e.jsx("div",{className:"w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700",children:e.jsx("div",{className:"h-full bg-emerald-500 transition-all duration-300",style:{width:`${i}%`}})}),e.jsx("p",{className:"text-center text-xs text-slate-500 mt-3",children:"预计耗时 5-15 秒，请勿关闭页面"})]}):e.jsxs("button",{onClick:C,className:"group relative px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20 flex items-center gap-2",children:[e.jsx(S,{className:"w-5 h-5 fill-current"}),"开始深度分析",e.jsx("div",{className:"absolute inset-0 rounded-full ring-4 ring-emerald-500/30 animate-pulse-slow group-hover:ring-emerald-400/50"})]})})]}),e.jsx("input",{type:"file",ref:x,onChange:I,className:"hidden",accept:"image/*",multiple:!0}),!l&&d.length===0&&e.jsx("p",{className:"text-center text-slate-500 text-xs mt-6 max-w-sm mx-auto",children:"为了获得最准确的结果，建议上传包含“每期还款金额”的详细截图，我们将为您进行双重验算。"})]})};export{G as default};
