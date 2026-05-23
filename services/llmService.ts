@@ -72,9 +72,21 @@ function calculateIRR(cashFlows: number[], guess = 0.1): { rate: number, logs: s
 }
 
 // ============================================================
+// File → base64（统一处理）
+// ============================================================
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============================================================
 // 图片压缩（上传前缩小体积）
 // ============================================================
-function compressImage(base64: string, maxWidth = 1600, quality = 0.92): Promise<string> {
+function compressImage(base64: string, maxWidth = 1200, quality = 0.8): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -100,7 +112,7 @@ function compressImage(base64: string, maxWidth = 1600, quality = 0.92): Promise
 }
 
 // ============================================================
-// System Prompt（与原来一致，精简至核心）
+// System Prompt
 // ============================================================
 const SYSTEM_PROMPT = `你是一个冷酷的金融审计师，专门揭露贷款广告中的真实利率陷阱。
 
@@ -124,19 +136,21 @@ const SYSTEM_PROMPT = `你是一个冷酷的金融审计师，专门揭露贷款
 所有数值字段必须为数字，不要加逗号或货币符号。`;
 
 // ============================================================
-// 主要分析函数
+// 主要分析函数 — 接收 File[] 而非 base64
 // ============================================================
-export const analyzeLoanImage = async (base64Images: string[], monthlyIncome?: number): Promise<AnalysisResult> => {
+export const analyzeLoanImage = async (files: File[], monthlyIncome?: number): Promise<AnalysisResult> => {
   try {
-    // 1. 压缩所有图片
+    // 1. File → base64
+    const base64Images = await Promise.all(files.map(fileToBase64));
+
+    // 2. 压缩所有图片（降低质量节省 Token）
     const compressedImages = await Promise.all(
       base64Images.map(b64 => compressImage(b64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "data:image/jpeg;base64,")))
     );
 
-    // 2. 构造请求体（GLM-4V-Flash 多模态格式）
+    // 3. 构造请求体
     const userContent: any[] = [];
 
-    // 添加所有图片
     for (const img of compressedImages) {
       userContent.push({
         type: "image_url",
@@ -231,12 +245,12 @@ export const analyzeLoanImage = async (base64Images: string[], monthlyIncome?: n
     const rawText = data.choices?.[0]?.message?.content;
     if (!rawText) throw new Error("AI 返回为空");
 
-    // 3. 解析 JSON（AI 可能夹带额外文字）
+    // 4. 解析 JSON（AI 可能夹带额外文字）
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
     const rawResult = JSON.parse(jsonMatch ? jsonMatch[0] : rawText);
 
     // ============================================================
-    // 4. CLIENT-SIDE CROSS-VERIFICATION（与原来一致）
+    // 5. CLIENT-SIDE CROSS-VERIFICATION
     // ============================================================
     let finalApr = rawResult.realApr;
     const aiEstimatedApr = rawResult.realApr;
@@ -361,8 +375,3 @@ ${varianceExplanation}`.trim()
     throw error;
   }
 };
-
-// ============================================================
-// 导出函数别名（兼容旧代码）
-// ============================================================
-export const analyzeLoanImageWithGemini = analyzeLoanImage;

@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
-import { Github, Scale, Calculator, Zap, ShieldCheck } from 'lucide-react';
-import FileUpload from './components/FileUpload';
-import IncomeInput from './components/IncomeInput';
-import AnalysisView from './components/AnalysisView';
-import EducationGrid from './components/EducationGrid';
+import React, { useState, lazy, Suspense } from 'react';
+import { Scale, Github, Calculator, Zap, ShieldCheck } from 'lucide-react';
 import { analyzeLoanImage } from './services/llmService';
 import { AnalysisResult } from './types';
+import ErrorBoundary from './components/ErrorBoundary';
+
+const FileUpload = lazy(() => import('./components/FileUpload'));
+const IncomeInput = lazy(() => import('./components/IncomeInput'));
+const AnalysisView = lazy(() => import('./components/AnalysisView'));
+const EducationGrid = lazy(() => import('./components/EducationGrid'));
 
 type Step = 'upload' | 'income' | 'processing' | 'result';
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center py-16">
+    <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+  </div>
+);
 
 const App: React.FC = () => {
   const [step, setStep] = useState<Step>('upload');
@@ -21,13 +29,12 @@ const App: React.FC = () => {
     if (files.length === 0) return;
 
     setUploadedFiles(files);
-    
-    // If we don't have income info yet, ask for it first
+
     if (!monthlyIncome) {
       setStep('income');
       return;
     }
-    
+
     await runAnalysis(files, monthlyIncome);
   };
 
@@ -53,20 +60,9 @@ const App: React.FC = () => {
     setResult(null);
 
     try {
-      const filePromises = files.map(file => {
-        return new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
-      });
-
-      const base64Images = await Promise.all(filePromises);
-      const analysis = await analyzeLoanImage(base64Images, income);
+      const analysis = await analyzeLoanImage(files, income);
       setResult(analysis);
       setStep('result');
-
     } catch (err) {
       console.error(err);
       const msg = err instanceof Error ? err.message : '未知错误';
@@ -82,7 +78,6 @@ const App: React.FC = () => {
     setError(null);
     setStep('upload');
     setUploadedFiles([]);
-    // Keep monthlyIncome so next analysis skips income step
   };
 
   const showUpload = step === 'upload' || step === 'processing';
@@ -91,7 +86,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-emerald-500/30">
-      
+
       {/* Background Gradients */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
@@ -109,9 +104,9 @@ const App: React.FC = () => {
               LoanTruth <span className="text-emerald-500 text-sm font-medium px-2 py-0.5 bg-emerald-500/10 rounded-full ml-2 hidden sm:inline-block">利率照妖镜</span>
             </span>
           </div>
-          <a 
-            href="https://github.com/Focus688/LoanTruth" 
-            target="_blank" 
+          <a
+            href="https://github.com/Focus688/LoanTruth"
+            target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
           >
@@ -123,7 +118,7 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="relative z-10 flex-grow flex flex-col items-center justify-start p-4 sm:p-8 pt-12">
-        
+
         {/* Hero Section - only on upload step */}
         {showUpload && !error && (
           <div className="text-center max-w-3xl mx-auto mb-12 animate-fade-in px-4">
@@ -162,24 +157,26 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {showIncome && (
-            <IncomeInput 
-              onSubmit={handleIncomeSubmit}
-              onSkip={handleIncomeSkip}
-              onBack={handleIncomeBack}
-            />
-          )}
+          <Suspense fallback={<LoadingFallback />}>
+            {showIncome && (
+              <IncomeInput
+                onSubmit={handleIncomeSubmit}
+                onSkip={handleIncomeSkip}
+                onBack={handleIncomeBack}
+              />
+            )}
 
-          {showUpload && !error && (
-            <>
-              <FileUpload onAnalyze={handleAnalyze} isProcessing={isProcessing} />
-              {!isProcessing && <EducationGrid />}
-            </>
-          )}
+            {showUpload && !error && (
+              <>
+                <FileUpload onAnalyze={handleAnalyze} isProcessing={isProcessing} />
+                {!isProcessing && <EducationGrid />}
+              </>
+            )}
 
-          {showResult && result && (
-            <AnalysisView result={result} onReset={handleReset} />
-          )}
+            {showResult && result && (
+              <AnalysisView result={result} onReset={handleReset} />
+            )}
+          </Suspense>
         </div>
 
       </main>
@@ -194,4 +191,10 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+const AppWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
+
+export default AppWithErrorBoundary;
