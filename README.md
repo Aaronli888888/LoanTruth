@@ -2,163 +2,164 @@
 
 ![LoanTruth Banner](assets/banner-new.png)
 
-# LoanTruth · 利率照妖镜
+# LoanTruth · See Through the Interest-Rate Illusion
 
-**上传一张贷款截图，AI 帮你撕开金融产品的画皮**
+**Upload a loan screenshot. AI rips off the financial product's mask and shows you the real cost.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald?style=flat-square)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
-[![智谱 GLM-4.6V-Flash](https://img.shields.io/badge/GLM--4.6V--Flash-8B5CF6?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMkM2LjQ3NyAyIDIgNi40NzcgMiAxMnM0LjQ3NyAxMCAxMCAxMCAxMC00LjQ3NyAxMC0xMFMxNy41MjMgMiAxMiAyem0wIDE4Yy00LjQxMSAwLTgtMy41ODktOC04czMuNTg5LTggOC04IDggMy41ODkgOCA4LTMuNTg5IDgtOCA4eiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=&logoColor=white)](https://bigmodel.cn)
+[![Zhipu GLM-4V-Flash](https://img.shields.io/badge/GLM--4V--Flash-free-8B5CF6?style=flat-square)](https://bigmodel.cn)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 
-**🌍 帮助全球年轻人看懂利率陷阱，拒绝被收割**
+**🌍 Helping young people worldwide see through predatory lending — one person at a time.**
 
 </div>
 
 ---
 
-## 为什么要做这件事？
+## Why this exists
 
-> **全球有数十亿年轻人正在被高利息贷款毁掉一生。**
+> **Billions of young people are having their lives destroyed by high-interest loans.**
 >
-> 他们不是不聪明——他们只是对利率的认知被刻意模糊了。
+> They're not stupid — the interest rates are deliberately obfuscated.
 >
-> "日息万五"听起来很便宜，"月费率0.6%"看起来很低，但数学不会骗人。
+> "Only 0.05% daily" sounds cheap. "0.6% monthly fee" looks low. **But math doesn't lie.**
 
-**LoanTruth 的使命就一句话：**
+**LoanTruth's mission, in one line:**
 
-> **用数学和 AI 撕开金融产品的画皮，帮一个是一个。**
+> **Use math and AI to expose predatory financial products. Help whoever we can.**
 
 ---
 
-## 它能做什么？
+## 🚀 Live Demo
 
-| 功能 | 说明 |
-|------|------|
-| 📸 **截图上传** | 支持多图拼接（首页广告 + 还款计划表） |
-| 🤖 **AI 识别** | Gemini 2.5 Flash 自动提取本金、期数、隐藏费用 |
-| 🧮 **算法验真** | Newton-Raphson IRR 本地计算，双重验证 |
-| 🚨 **陷阱检测** | 砍头息、保险费捆绑、提前还款违约金 |
-| 💰 **收入负担比** | 输入月收入，计算你离崩溃还有多远 |
-| ⛔ **债务循环警告** | 以贷养贷 = 慢性自杀，AI 告诉你为什么 |
-| 🎲 **投资警告** | 不要靠股票/币圈/赌博翻身——事实是 90% 的人亏得更惨 |
-| 🛟 **生存路线图** | 具体、可执行的摆脱债务步骤 |
+**👉 [Try it now](https://loantruth.pages.dev/)** — fast, global CDN
+
+*(Mirror: [GitHub Pages](https://focus688.github.io/LoanTruth/))*
 
 ---
 
-## 快速开始
+## What it does
 
-### 在线体验
+| Feature | Description |
+|---------|-------------|
+| 📸 **Screenshot upload** | Multi-image stitching (homepage ad + repayment schedule) |
+| 🤖 **AI recognition** | Zhipu GLM-4V-Flash extracts principal, term, hidden fees |
+| 🧮 **Algorithmic verification** | Halley-method IRR computed locally (3rd-order convergence) |
+| 🚨 **Trap detection** | Upfront interest, forced insurance, early-repayment penalties |
+| 💰 **Debt-to-income ratio** | Enter monthly income, see how close to collapse you are |
+| ⛔ **Debt-cycle warning** | Borrowing to repay debt = slow suicide |
+| 🎲 **Investment warning** | Don't gamble your way out of debt — 90% lose more |
+| 🛟 **Survival roadmap** | Concrete, actionable steps out of debt |
 
-[GitHub Pages](https://focus688.github.io/LoanTruth/)
+---
 
-### 本地运行
+## Quick Start
 
 ```bash
-# 1. 克隆
+# 1. Clone
 git clone https://github.com/Focus688/LoanTruth.git
 cd LoanTruth
 
-# 2. 安装依赖
+# 2. Install dependencies
 npm install
 
-# 3. 配置智谱 GLM-4.6V-Flash API 密钥
-#    去 https://bigmodel.cn 注册，免费获取 API Key
-echo "VITE_ZHIPU_API_KEY=你的key" > .env.local
+# 3. Configure the Zhipu GLM-4V-Flash API key
+#    Get a free key at https://bigmodel.cn
+echo "VITE_ZHIPU_API_KEY=your_key" > .env.local
 
-# 4. 启动
+# 4. Run
 npm run dev
 ```
 
-> 🆓 Gemini API 有免费额度，够日常使用。
-
-### 技术栈
-
-| 层 | 选型 |
-|----|------|
-| 框架 | React 19 + TypeScript |
-| 构建 | Vite 6 |
-| 样式 | Tailwind CSS (CDN) |
-| AI | 智谱 GLM-4.6V-Flash (永久免费) |
-| 算法 | Halley IRR (三阶收敛，客户端纯计算) |
-| 图表 | Recharts |
-| 图标 | Lucide React |
+> 🆓 GLM-4V-Flash has a free tier — enough for personal use. The core IRR math works **without any API key**.
 
 ---
 
-## 架构
+## Tech Stack
+
+| Layer | Choice |
+|-------|--------|
+| Framework | React 19 + TypeScript |
+| Build | Vite 6 |
+| Styling | Tailwind CSS |
+| AI | Zhipu GLM-4V-Flash (free tier) |
+| Algorithm | Halley IRR (3rd-order convergence, client-side) |
+| Charts | Recharts |
+| Icons | Lucide React |
+
+---
+
+## Architecture
 
 ```
-用户上传截图
-    ↓
-智谱 GLM-4.6V-Flash 解析图像 → 提取(本金/期数/还款/费用)
-    ↓
-本地 Halley IRR 算法 → 精确计算真实年化
-    ↓
-双重验证 → AI估算 vs 算法精确
-    ↓
-生成报告 → 风险等级 + 陷阱 + 负担分析 + 生存路线图
+Upload screenshot
+        ↓
+Zhipu GLM-4V-Flash extracts (principal / term / payment / fees)
+        ↓
+Local Halley IRR → precise real APR
+        ↓
+Double verification → AI estimate vs. algorithm
+        ↓
+Report → risk level + traps + burden analysis + survival roadmap
 ```
 
-**为什么客户端计算？**  
-用户数据不上传服务器。图片直接发往 Gemini API，参数计算在浏览器中完成。收入数据只存在于内存中，刷新即失。
+**Why client-side?** User data never hits our servers. Images go directly to the AI API; computation happens in the browser. Income data lives only in memory and disappears on refresh.
 
 ---
 
-## 为什么你该参与
+## Risk Tiers
 
-这不是一个"有趣的项目"。
-
-- 你身边可能有正在以贷养贷的朋友
-- 你可能见过被网贷毁掉的年轻人
-- 你可能自己也吃过"日息万五"的亏
-
-**这个项目每帮到一个人，就少一个被金融收割的年轻人。**
-
-如果你能帮忙：
-- 🎨 **设计** — 让界面更冲击、更易用
-- 🧮 **算法** — 更好的 IRR 计算，更多金融产品支持
-- 🌍 **翻译** — 让更多国家的年轻人能用上
-- 📢 **传播** — 帮一个是一个
-
-[查看贡献指南 →](CONTRIBUTING.md)
+| Tier | Real APR | Meaning |
+|------|----------|---------|
+| 🟢 Low | < 10% | Normal bank loans, mortgages |
+| 🟡 Medium | 10–24% | Credit cards, consumer loans |
+| 🟠 High | 24–36% | High-interest cash loans — pay off ASAP |
+| 🔴 Predatory | > 36% | Usury — legally unprotected in most jurisdictions |
 
 ---
 
-## 风险分级（参考）
+## Why contribute
 
-| 等级 | 真实年化 | 说明 |
-|------|----------|------|
-| 🟢 低 | < 10% | 正常银行贷款、房贷 |
-| 🟡 中 | 10% - 24% | 信用卡、消费贷 |
-| 🟠 高 | 24% - 36% | 高息现金贷，尽快还清 |
-| 🔴 诈骗 | > 36% | 高利贷，法律不予保护 |
+This isn't a "fun project."
 
-**法律红线：** 中国法律规定年化超过 36% 的部分不受法律保护。超过 24% 的部分已属高利息。
+- You may know someone trapped in a debt cycle right now
+- You may have seen young people ruined by predatory loans
+- You may have been burned by "0.05% daily" yourself
+
+**Every person this project helps is one fewer person harvested by the financial machine.**
+
+How you can help:
+- 🎨 **Design** — make the UI more impactful and approachable
+- 🧮 **Algorithm** — better IRR, more financial products
+- 🌍 **Translation** — reach young people in more countries
+- 📢 **Spread the word** — help whoever we can
+
+[Contribution guide →](CONTRIBUTING.md)
 
 ---
 
-## 路线图
+## Roadmap
 
-- [x] MVP — 单图上传 + Gemini分析 + IRR验真
-- [x] 收入负担比 — 输入月收入，计算债务占比
-- [x] 债务循环警告 — 以贷养贷的危害分析
-- [x] 投资赌博警告 — 股票/币圈不能救命
-- [x] 生存路线图 — 具体摆脱债务的步骤
-- [ ] 多语言支持 (EN/ES/JP/ID)
-- [ ] 更多金融产品模板 (车贷/房贷/信用卡)
-- [ ] 本地 OCR 降级 (无需 API 也能算)
-- [ ] 打包为 PWA / Telegram Bot
+- [x] MVP — single upload + AI analysis + IRR verification
+- [x] Debt-to-income ratio
+- [x] Debt-cycle warning
+- [x] Investment/gambling warning
+- [x] Survival roadmap
+- [ ] Multi-language (EN/ES/JP/ID)
+- [ ] More product templates (auto / mortgage / credit card)
+- [ ] Local OCR fallback (works without any API)
+- [ ] PWA / Telegram Bot
 
 ---
 
 <div align="center">
 
-**数学不会骗人。看清它，你就赢了。**
+**Math doesn't lie. See it, and you win.**
 
-[立即体验](https://focus688.github.io/LoanTruth/) · [报告 Issue](https://github.com/Focus688/LoanTruth/issues) · [一起贡献](CONTRIBUTING.md)
+[Try it](https://loantruth.pages.dev/) · [Report issue](https://github.com/Focus688/LoanTruth/issues) · [Contribute](CONTRIBUTING.md)
 
 <sub>Made with ❤️ for every young person trapped in debt.</sub>
 
