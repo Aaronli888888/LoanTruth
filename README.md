@@ -39,6 +39,10 @@
 
 *(Mirror: [GitHub Pages](https://focus688.github.io/LoanTruth/))*
 
+![LoanTruth demo](assets/demo.gif)
+
+*Upload a screenshot → AI extracts the terms → Halley IRR verifies the real APR. "0.05% daily" ≈ 18.25% nominal, but **30.92% real** after upfront fees.*
+
 ---
 
 ## What it does

@@ -3,12 +3,11 @@ import { AnalysisResult } from "../types";
 // ============================================================
 // 配置
 // ============================================================
-// 默认走 CF Worker 代理（key 存服务端 secret，不暴露在前端 bundle）。
-// 自托管：设 VITE_API_ENDPOINT 指向你自己的 Worker 或智谱直连端点。
+// 默认直调智谱（国内可达）。海外/自托管用户可设 VITE_API_ENDPOINT 指向自己的 CF Worker 代理。
 const API_ENDPOINT =
   import.meta.env.VITE_API_ENDPOINT ||
-  "https://loantruth-proxy.liwei0910-641.workers.dev";
-const API_KEY = import.meta.env.VITE_ZHIPU_API_KEY || ""; // 仅直连智谱时需要
+  "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+const API_KEY = import.meta.env.VITE_ZHIPU_API_KEY || ""; // build 时注入（demo 用免费额度）
 const MODEL = "glm-4v-flash";
 
 // ============================================================
