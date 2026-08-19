@@ -1,0 +1,9 @@
+name = "loantruth-proxy"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# 免登录部署：走 API Token（wrangler 无 device flow，远程环境 OAuth 回调必断）
+# 部署前需设置 secret：
+#   echo "你的GLM_API_KEY" | wrangler secret put GLM_API_KEY
+# 然后：
+#   wrangler deploy

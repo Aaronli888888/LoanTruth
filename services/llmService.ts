@@ -3,8 +3,12 @@ import { AnalysisResult } from "../types";
 // ============================================================
 // 配置
 // ============================================================
-const API_ENDPOINT = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
-const API_KEY = import.meta.env.VITE_ZHIPU_API_KEY || "";
+// 默认走 CF Worker 代理（key 存服务端 secret，不暴露在前端 bundle）。
+// 自托管：设 VITE_API_ENDPOINT 指向你自己的 Worker 或智谱直连端点。
+const API_ENDPOINT =
+  import.meta.env.VITE_API_ENDPOINT ||
+  "https://loantruth-proxy.liwei0910-641.workers.dev";
+const API_KEY = import.meta.env.VITE_ZHIPU_API_KEY || ""; // 仅直连智谱时需要
 const MODEL = "glm-4v-flash";
 
 // ============================================================
@@ -220,7 +224,7 @@ export const analyzeLoanImage = async (files: File[], monthlyIncome?: number): P
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
+        ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
       },
       body: JSON.stringify({
         model: MODEL,
